@@ -276,6 +276,13 @@ public class MoviesApiTest {
     void whenIncorrectPostContentType_thenReturn415() throws Exception {
         HttpRequest request = post(URI.create(MOVIES_URI_BASE), "", "trash");
         HttpResponse<String> resp = client.send(request, BODY_HANDLER);
-        assertEquals(415, resp.statusCode(), "GET /movies должен вернуть 415");
+        assertEquals(415, resp.statusCode(), "POST /movies должен вернуть 415");
+    }
+
+    @Test
+    void whenInvalidJsonInPost_thenReturn422() throws Exception {
+        HttpRequest request = postWithJsonContent(URI.create(MOVIES_URI_BASE), "{ \"title: }");
+        HttpResponse<String> resp = client.send(request, BODY_HANDLER);
+        assertEquals(422, resp.statusCode(), "POST /movies должен вернуть 422");
     }
 }

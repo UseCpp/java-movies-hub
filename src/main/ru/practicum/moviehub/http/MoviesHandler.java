@@ -127,14 +127,14 @@ public class MoviesHandler extends BaseHttpHandler {
             return;
         }
 
-        var jsonElement = JsonParser.parseString(new String(ex.getRequestBody().readAllBytes(), DEFAULT_CHARSET));
-        if (!jsonElement.isJsonObject()) {
-            sendAsJson(ex, 422, ErrorResponse.of("Ожидался JSON-объект в теле запроса"));
-            return;
-        }
-
         Movie movie;
         try {
+            var jsonElement = JsonParser.parseString(new String(ex.getRequestBody().readAllBytes(), DEFAULT_CHARSET));
+            if (!jsonElement.isJsonObject()) {
+                sendAsJson(ex, 422, ErrorResponse.of("Ожидался JSON-объект в теле запроса"));
+                return;
+            }
+
             movie = gson.fromJson(jsonElement, Movie.class);
         } catch (JsonSyntaxException e) {
             sendAsJson(ex, 422, ErrorResponse.of("Ошибка в формате JSON"));
