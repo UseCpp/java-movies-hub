@@ -27,21 +27,10 @@ public class MoviesHandler extends BaseHttpHandler {
     @Override
     public void handle(HttpExchange ex) throws IOException {
         switch (ex.getRequestMethod().toLowerCase()) {
-            case "get": {
-                processGet(ex);
-                return;
-            }
-            case "post": {
-                processPost(ex);
-                return;
-            }
-            case "delete": {
-                processDelete(ex);
-                return;
-            }
-            default: {
-                sendNoContent(ex, 204);
-            }
+            case "get" -> processGet(ex);
+            case "post" -> processPost(ex);
+            case "delete" -> processDelete(ex);
+            default -> sendNoContent(ex, 405);
         }
     }
 

@@ -308,4 +308,11 @@ public class MoviesApiTest {
         HttpResponse<String> resp = client.send(request, BODY_HANDLER);
         assertEquals(422, resp.statusCode());
     }
+
+    @Test
+    void whenUnsupportedMethodRequest_thenReturn405() throws Exception {
+        HttpRequest request = HttpRequest.newBuilder(URI.create(MOVIES_URI_BASE)).HEAD().build();
+        HttpResponse<String> resp = client.send(request, BODY_HANDLER);
+        assertEquals(405, resp.statusCode());
+    }
 }
