@@ -118,11 +118,11 @@ public class MoviesHandler extends BaseHttpHandler {
     }
 
     private void processPost(HttpExchange ex) throws IOException {
-        boolean jsonExpected = Optional.ofNullable(ex.getResponseHeaders().get("Content-Type"))
+        boolean acceptedJson = Optional.ofNullable(ex.getRequestHeaders().get("Content-Type"))
                 .map(List::getFirst)
                 .filter(CT_JSON::equals)
                 .isPresent();
-        if (jsonExpected) {
+        if (!acceptedJson) {
             sendNoContent(ex, 415);
             return;
         }

@@ -109,16 +109,20 @@ public class MoviesApiTest {
         assertEquals(proxyStore.getAllMovies(), gson.fromJson(body, token.getType()));
     }
 
-    public HttpRequest post(URI uri, String requestBody) {
+    public HttpRequest postWithJsonContent(URI uri, String requestBody) {
+        return post(uri, requestBody, "application/json; charset=UTF-8");
+    }
+
+    public HttpRequest post(URI uri, String requestBody, String contentType) {
         return HttpRequest.newBuilder().uri(uri)
-                .header("Content-Type", "application/json; charset=UTF-8")
+                .header("Content-Type", contentType)
                 .POST(HttpRequest.BodyPublishers.ofString(requestBody))
                 .build();
     }
 
     @Test
     void whenAddNormalMovie_return201() throws Exception {
-        HttpRequest request = post(URI.create(MOVIES_URI_BASE), gson.toJson(DUMMY_MOVIE));
+        HttpRequest request = postWithJsonContent(URI.create(MOVIES_URI_BASE), gson.toJson(DUMMY_MOVIE));
         HttpResponse<String> resp = client.send(request, BODY_HANDLER);
 
         assertEquals(201, resp.statusCode());
@@ -140,7 +144,7 @@ public class MoviesApiTest {
     @ParameterizedTest(name = "{1}")
     @MethodSource("badMovies")
     void whenAddBadMovies_return422(Movie movie, String name) throws Exception {
-        HttpRequest request = post(URI.create(MOVIES_URI_BASE), gson.toJson(movie));
+        HttpRequest request = postWithJsonContent(URI.create(MOVIES_URI_BASE), gson.toJson(movie));
         HttpResponse<String> resp = client.send(request, BODY_HANDLER);
         assertEquals(422, resp.statusCode());
         assertJsonContentType(resp);
@@ -152,7 +156,7 @@ public class MoviesApiTest {
     @Test
     void whenAddDuplicateMovie_return422() throws Exception {
         Movie movie = new Movie("тестовый фильм", 1999);
-        HttpRequest request = post(URI.create(MOVIES_URI_BASE), gson.toJson(movie));
+        HttpRequest request = postWithJsonContent(URI.create(MOVIES_URI_BASE), gson.toJson(movie));
         HttpResponse<String> resp = client.send(request, BODY_HANDLER);
 
         assertEquals(201, resp.statusCode());
@@ -266,5 +270,12 @@ public class MoviesApiTest {
 
         client.send(get(URI.create(MOVIES_URI_BASE + "?trash")), BODY_HANDLER);
         assertEquals(400, resp.statusCode(), "GET /movies должен вернуть 400");
+    }
+
+    @Test
+    void whenIncorrectPostContentType_thenReturn415() throws Exception {
+        HttpRequest request = post(URI.create(MOVIES_URI_BASE), "", "trash");
+        HttpResponse<String> resp = client.send(request, BODY_HANDLER);
+        assertEquals(415, resp.statusCode(), "GET /movies должен вернуть 415");
     }
 }
