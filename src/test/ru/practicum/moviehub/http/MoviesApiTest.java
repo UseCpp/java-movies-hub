@@ -315,4 +315,16 @@ public class MoviesApiTest {
         HttpResponse<String> resp = client.send(request, BODY_HANDLER);
         assertEquals(405, resp.statusCode());
     }
+
+    @Test
+    void whenGetMoviesByUnsupportedFilerCombinations_thenReturn400() throws Exception {
+        HttpResponse<String> resp = client.send(get(URI.create(MOVIES_URI_BASE + "?year=1999&anything=12")), BODY_HANDLER);
+        assertEquals(400, resp.statusCode(), "GET /movies должен вернуть 400");
+
+        resp = client.send(get(URI.create(MOVIES_URI_BASE + "?year=1999&flag")), BODY_HANDLER);
+        assertEquals(400, resp.statusCode(), "GET /movies должен вернуть 400");
+
+        resp = client.send(get(URI.create(MOVIES_URI_BASE + "?wow=flag")), BODY_HANDLER);
+        assertEquals(400, resp.statusCode(), "GET /movies должен вернуть 400");
+    }
 }

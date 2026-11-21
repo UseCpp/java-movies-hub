@@ -42,14 +42,14 @@ public class MoviesHandler extends BaseHttpHandler {
             if (requestArguments.isEmpty()) {
                 sendAsJson(ex, 200, moviesStore.getAllMovies());
             } else {
-                if (requestArguments.containsKey(YEAR_FILTER_KEY)) {
+                if (requestArguments.containsKey(YEAR_FILTER_KEY) && requestArguments.size() == 1) {
                     Optional<Integer> yearOpt = parseWithNotification(requestArguments.get(YEAR_FILTER_KEY), "Некорректный параметр запроса — 'year'", ex);
                     if (yearOpt.isPresent()) {
                         int year = yearOpt.get();
                         sendAsJson(ex, 200, moviesStore.getAllMovies().stream().filter(movie -> movie.year() == year).toList());
                     }
                 } else {
-                    sendAsJson(ex, 400, ErrorResponse.of("Неожиданные параметры запроса - " + requestArguments.keySet()));
+                    sendAsJson(ex, 400, ErrorResponse.of("Неожиданные параметры запроса - " + requestArguments.keySet(), "Ожидался только параметр 'year'"));
                 }
             }
         } else {
