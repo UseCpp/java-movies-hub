@@ -157,7 +157,7 @@ public class MoviesHandler extends BaseHttpHandler {
 
     private List<String> validate(Movie movie) {
         List<String> problems = new ArrayList<>();
-        if (movie.title().isEmpty()) {
+        if (movie.title() == null || movie.title().isEmpty()) {
             problems.add("Название фильма не должно быть пустым");
         } else if (movie.title().length() > 100) {
             problems.add("Название фильма слишком длинное");

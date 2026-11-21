@@ -285,4 +285,20 @@ public class MoviesApiTest {
         HttpResponse<String> resp = client.send(request, BODY_HANDLER);
         assertEquals(422, resp.statusCode(), "POST /movies должен вернуть 422");
     }
+
+    @Test
+    void whenNullFieldOfMovieName_thenReturn422() throws Exception {
+        Movie movie = new Movie(null, 1999);
+        HttpRequest request = postWithJsonContent(URI.create(MOVIES_URI_BASE), gson.toJson(movie));
+        HttpResponse<String> resp = client.send(request, BODY_HANDLER);
+
+        assertEquals(422, resp.statusCode());
+    }
+
+    @Test
+    void whenNullFieldOfMovieYear_thenReturn422() throws Exception {
+        HttpRequest request = postWithJsonContent(URI.create(MOVIES_URI_BASE), "{\"title\": \"name\"}");
+        HttpResponse<String> resp = client.send(request, BODY_HANDLER);
+        assertEquals(422, resp.statusCode());
+    }
 }
