@@ -165,8 +165,8 @@ public class MoviesHandler extends BaseHttpHandler {
 
         if (movie.year() < 1888) {
             problems.add("Год выпуска фильма не может быть меньше 1888");
-        } else if (movie.year() > LocalDate.now().getYear()) {
-            problems.add("Нельзя добавлять фильмы, которые не вышли");
+        } else if (movie.year() > (LocalDate.now().getYear() + 1)) {
+            problems.add("Нельзя добавлять фильмы, которые выйдут через 2 года и позже");
         }
         return problems;
     }

@@ -120,11 +120,18 @@ public class MoviesApiTest {
                 .build();
     }
 
-    @Test
-    void whenAddNormalMovie_return201() throws Exception {
-        HttpRequest request = postWithJsonContent(URI.create(MOVIES_URI_BASE), gson.toJson(DUMMY_MOVIE));
-        HttpResponse<String> resp = client.send(request, BODY_HANDLER);
+    private static Stream<Arguments> validMovies() {
+        return Stream.of(
+                Arguments.of(DUMMY_MOVIE, "Фильм 1999 года"),
+                Arguments.of(new Movie("Фильм", LocalDate.now().getYear() + 1), "Фильм следующего года")
+        );
+    }
 
+    @ParameterizedTest(name = "{1}")
+    @MethodSource("validMovies")
+    void whenAddNormalMovies_return201(Movie movie, String name) throws Exception {
+        HttpRequest request = postWithJsonContent(URI.create(MOVIES_URI_BASE), gson.toJson(movie));
+        HttpResponse<String> resp = client.send(request, BODY_HANDLER);
         assertEquals(201, resp.statusCode());
         assertJsonContentType(resp);
 
@@ -137,7 +144,7 @@ public class MoviesApiTest {
                 Arguments.of(new Movie("", 1999), "Фильм без названия"),
                 Arguments.of(new Movie(String.valueOf('_').repeat(10_000), 1999), "Длинное название фильма"),
                 Arguments.of(new Movie("Фильм", 1000), "Год выхода фильма раньше 1888"),
-                Arguments.of(new Movie("Фильм", LocalDate.now().getYear() + 2), "Еще не вышедший фильм")
+                Arguments.of(new Movie("Фильм", LocalDate.now().getYear() + 2), "Фильм, который выходит через 2 года")
         );
     }
 
