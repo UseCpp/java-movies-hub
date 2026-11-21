@@ -327,4 +327,10 @@ public class MoviesApiTest {
         resp = client.send(get(URI.create(MOVIES_URI_BASE + "?wow=flag")), BODY_HANDLER);
         assertEquals(400, resp.statusCode(), "GET /movies должен вернуть 400");
     }
+
+    @Test
+    void whenDeleteWithIncorrectId_thenReturn400() throws Exception {
+        HttpResponse<String> resp = client.send(delete(URI.create(MOVIES_URI_BASE + "/string")), BODY_HANDLER);
+        assertEquals(400, resp.statusCode());
+    }
 }
